@@ -1,0 +1,54 @@
+[package]
+name = "crossbow"
+description = "Crossbow browser"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+default-run = "crossbow"
+
+[[bin]]
+name = "crossbow"
+path = "src/main.rs"
+
+[[bin]]
+name = "crossbow-helper"
+path = "src/bin/crossbow_helper.rs"
+
+[[bin]]
+name = "crossbow-update"
+path = "src/bin/crossbow_update.rs"
+
+[package.metadata.cef.bundle]
+helper_name = "crossbow-helper"
+resources_path = "resources"
+
+[dependencies]
+crossbow-core = { path = "../crates/crossbow-core" }
+crossbow-engine = { path = "../crates/crossbow-engine" }
+crossbow-ai = { path = "../crates/crossbow-ai" }
+cef = { version = "=154.5.0", default-features = false, features = ["sandbox", "accelerated_osr"] }
+eframe = { version = "0.37", default-features = false, features = ["wgpu", "accesskit", "default_fonts", "system_fonts", "persistence"] }
+egui = "0.37"
+egui-wgpu = "0.37"
+wgpu = "30"
+log = "0.4"
+env_logger = "0.11"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+directories = "6"
+image = { version = "0.25", default-features = false, features = ["png"] }
+tempfile = "3"
+raw-window-handle = "0.6"
+
+[dev-dependencies]
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSApplication", "NSBitmapImageRep", "NSColorSpace", "NSGraphics", "NSImage", "NSImageRep", "NSOpenPanel", "NSPanel", "NSSavePanel", "NSResponder", "NSWindow", "NSView", "NSVisualEffectView", "NSWorkspace", "NSAccessibility", "NSColor", "NSAppearance", "NSScreen", "objc2-core-foundation", "block2"] }
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSGeometry", "NSString", "NSURL", "NSNotification", "NSOperation", "NSEnumerator", "block2"] }
+block2 = "0.6"

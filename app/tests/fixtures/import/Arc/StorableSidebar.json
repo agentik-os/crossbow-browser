@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "sidebar": {
+    "containers": [
+      { "global": {} },
+      {
+        "spaces": [
+          "fixture-space-work", {
+            "id": "fixture-space-work",
+            "title": "Fixture Work",
+            "profile": { "default": true },
+            "customInfo": { "iconType": { "icon": "briefcase" } },
+            "newContainerIDs": [
+              { "pinned": {} }, "fixture-work-pinned",
+              { "unpinned": { "_0": { "shared": {} } } }, "fixture-work-today"
+            ]
+          },
+          "fixture-space-research", {
+            "id": "fixture-space-research",
+            "title": "Fixture Research",
+            "profile": { "custom": { "_0": { "machineID": "FIXTURE-MAC", "directoryBasename": "Profile 1" } } },
+            "customInfo": { "iconType": { "icon": "book" } },
+            "containerIDs": ["pinned", "fixture-research-pinned"]
+          }
+        ],
+        "items": [
+          "fixture-work-pinned", {
+            "id": "fixture-work-pinned", "childrenIds": ["fixture-folder", "fixture-split"],
+            "data": { "itemContainer": { "containerType": { "spaceItems": { "_0": "fixture-space-work" } } } }
+          },
+          "fixture-folder", {
+            "id": "fixture-folder", "parentID": "fixture-work-pinned", "title": "Fixture Reading", "childrenIds": ["fixture-guide"],
+            "data": { "list": {} }
+          },
+          "fixture-guide", {
+            "id": "fixture-guide", "parentID": "fixture-folder", "title": "Renamed fixture guide", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://guide.example/", "savedTitle": "Fixture guide" } }
+          },
+          "fixture-split", {
+            "id": "fixture-split", "parentID": "fixture-work-pinned", "childrenIds": ["fixture-left", "fixture-right"],
+            "data": { "splitView": { "layoutOrientation": "horizontal" } }
+          },
+          "fixture-left", {
+            "id": "fixture-left", "parentID": "fixture-split", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://left.example/", "savedTitle": "Fixture left" } }
+          },
+          "fixture-right", {
+            "id": "fixture-right", "parentID": "fixture-split", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://right.example/", "savedTitle": "Fixture right" } }
+          },
+          "fixture-work-today", {
+            "id": "fixture-work-today", "childrenIds": ["fixture-news"],
+            "data": { "itemContainer": { "containerType": { "spaceItems": { "_0": "fixture-space-work" } } } }
+          },
+          "fixture-news", {
+            "id": "fixture-news", "parentID": "fixture-work-today", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://news.example/", "savedTitle": "Fixture news" } }
+          },
+          "fixture-research-pinned", {
+            "id": "fixture-research-pinned", "childrenIds": ["fixture-paper"],
+            "data": { "itemContainer": { "containerType": { "spaceItems": { "_0": "fixture-space-research" } } } }
+          },
+          "fixture-paper", {
+            "id": "fixture-paper", "parentID": "fixture-research-pinned", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://paper.example/", "savedTitle": "Fixture paper" } }
+          },
+          "fixture-default-favorites", {
+            "id": "fixture-default-favorites", "childrenIds": ["fixture-mail"],
+            "data": { "itemContainer": { "containerType": { "topApps": { "_0": { "default": true } } } } }
+          },
+          "fixture-mail", {
+            "id": "fixture-mail", "parentID": "fixture-default-favorites", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://mail.example/", "savedTitle": "Fixture mail" } }
+          },
+          "fixture-research-favorites", {
+            "id": "fixture-research-favorites", "childrenIds": ["fixture-library"],
+            "data": { "itemContainer": { "containerType": { "topApps": { "_0": { "custom": { "_0": { "machineID": "FIXTURE-MAC", "directoryBasename": "Profile 1" } } } } } } }
+          },
+          "fixture-library", {
+            "id": "fixture-library", "parentID": "fixture-research-favorites", "childrenIds": [],
+            "data": { "tab": { "savedURL": "https://library.example/", "savedTitle": "Fixture library" } }
+          }
+        ],
+        "topAppsContainerIDs": [
+          { "default": true }, "fixture-default-favorites",
+          { "custom": { "_0": { "machineID": "FIXTURE-MAC", "directoryBasename": "Profile 1" } } }, "fixture-research-favorites"
+        ]
+      }
+    ]
+  },
+  "sidebarSyncState": {},
+  "firebaseSyncState": {}
+}

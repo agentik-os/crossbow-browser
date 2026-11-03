@@ -1,0 +1,18 @@
+[package]
+name = "crossbow-ai"
+description = "Passive AI provider discovery, local-server diagnostics and the legacy Crossbow cloud client."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls", "stream"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+thiserror = "2"
+tokio = { version = "1", features = ["rt", "macros", "time", "sync"] }
+
+[dev-dependencies]
+tempfile = "3"

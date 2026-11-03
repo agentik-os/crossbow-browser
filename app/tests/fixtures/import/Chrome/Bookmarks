@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "roots": {
+    "bookmark_bar": {
+      "id": "1", "type": "folder", "name": "Bookmarks bar",
+      "children": [
+        { "id": "10", "type": "url", "name": "Fixture start", "url": "https://start.example/" },
+        {
+          "id": "11", "type": "folder", "name": "Fixture Chrome folder",
+          "children": [
+            { "id": "12", "type": "url", "name": "Fixture documentation", "url": "https://docs.example/" },
+            { "id": "13", "type": "url", "name": "Unsupported fixture", "url": "javascript:void(0)" }
+          ]
+        }
+      ]
+    },
+    "other": {
+      "id": "2", "type": "folder", "name": "Other bookmarks",
+      "children": [
+        { "id": "20", "type": "url", "name": "Fixture reference", "url": "https://reference.example/" }
+      ]
+    },
+    "synced": { "id": "3", "type": "folder", "name": "Mobile bookmarks", "children": [] }
+  }
+}

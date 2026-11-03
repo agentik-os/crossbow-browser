@@ -1,0 +1,4 @@
+! Title: Crossbow fixture: cookie banners
+! Written for Crossbow's content blocking fixture. Not a real list.
+/fixture-cmp.js
+###fixture-cookie-banner

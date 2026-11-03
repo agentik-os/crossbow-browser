@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "windows": [
+    { "expandedItems": ["fixture-folder", { "expanded": {} }] }
+  ]
+}

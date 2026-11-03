@@ -1,0 +1,34 @@
+pub mod anim;
+pub mod ai_settings;
+pub mod chat;
+pub mod command_bar;
+pub mod capture;
+pub mod content;
+pub mod content_blocking_shield;
+pub mod folders;
+pub mod icons;
+pub mod little;
+pub mod link_preview_card;
+pub mod logins;
+pub mod lucide_catalog;
+pub mod onboarding;
+pub mod overlays;
+pub mod pip;
+pub mod passwords;
+pub mod quit;
+pub mod settings;
+pub mod site_permissions;
+pub mod site_permission_settings;
+pub mod sidebar;
+pub mod site_notice;
+pub mod space_icon;
+pub mod theme;
+pub mod tidy_tabs;
+pub mod translate;
+pub mod window;
+
+pub mod style;
+
+pub mod glass;
+pub mod hover_preview;
+pub mod theme_editor;

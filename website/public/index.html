@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Crossbow — Room for your internet</title>
+  <meta name="description" content="A new desktop browser with Spaces, a vertical sidebar and a place for everything. Crossbow is in development for macOS first. Join the early-access waitlist.">
+  <meta property="og:title" content="Crossbow — Room for your internet">
+  <meta property="og:description" content="A fresh home for the same internet. A new desktop browser, in development for macOS first.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://crossbow.zone/">
+  <link rel="canonical" href="https://crossbow.zone/">
+  <link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/Manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="bow" viewBox="0 0 32 32"><path d="M7 6c10 1 18 9 19 19L7 6Zm0 0v19h19M6 26 25 7m-7 0h7v7"/></symbol>
+      <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+      <symbol id="folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9H3Z"/></symbol>
+      <symbol id="page" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6ZM14 3v5h5M9 12h7m-7 4h5"/></symbol>
+      <symbol id="grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+      <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+      <symbol id="compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6Z"/></symbol>
+      <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header wrap">
+    <a class="brand" href="/" aria-label="Crossbow home"><svg class="brand-mark" aria-hidden="true"><use href="#bow"/></svg><span>Crossbow</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#spaces">Take a look</a>
+      <a href="#questions">Questions</a>
+      <a class="button quiet nav-join" href="#waitlist">Get early access<svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title">Room for<br>your internet.</h1>
+        <p>A fresh home for your tabs, projects and rabbit holes. Meet Crossbow, a desktop browser built around Spaces.</p>
+        <p class="development-note">In development. macOS first. Windows and Linux planned.</p>
+      </div>
+      <section class="signup" id="waitlist" aria-labelledby="waitlist-title">
+        <h2 id="waitlist-title">Be here from the start.</h2>
+        <p>Join the waitlist for early access and occasional Crossbow updates.</p>
+        <form id="waitlist-form" novalidate>
+          <label for="email">Your email</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com" required disabled aria-describedby="form-status privacy-note">
+          <div class="honeypot" aria-hidden="true"><label for="website">Leave this field empty</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <div id="turnstile" class="turnstile-container"></div>
+          <button class="button primary" id="join-button" type="submit" disabled><span>Join the waitlist</span><svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite" aria-atomic="true">Checking waitlist availability…</p>
+          <button class="text-button" id="retry-config" type="button" hidden>Check again</button>
+          <button class="text-button" id="another-email" type="button" hidden>Use another email</button>
+          <p class="privacy-note" id="privacy-note">By joining, you agree to receive these emails. See our <a href="/privacy">privacy notice</a> for how your address is used and how to request removal.</p>
+          <noscript><p class="form-status">JavaScript is needed for the protected signup form. No email has been submitted.</p></noscript>
+        </form>
+      </section>
+    </section>
+
+    <section class="spaces-section wrap" id="spaces" aria-labelledby="spaces-title">
+      <div class="preview-heading">
+        <h2 id="spaces-title">Different headspaces.<br>The same browser.</h2>
+        <p>Switch the sample Space.<br>See how everything finds its place.</p>
+      </div>
+      <div class="space-switcher" role="tablist" aria-label="Sample Spaces">
+        <button type="button" id="tab-work" role="tab" aria-selected="true" aria-controls="space-preview" tabindex="0" data-space="work"><svg class="icon" aria-hidden="true"><use href="#grid"/></svg>Work</button>
+        <button type="button" id="tab-personal" role="tab" aria-selected="false" aria-controls="space-preview" tabindex="-1" data-space="personal"><svg class="icon" aria-hidden="true"><use href="#sun"/></svg>Personal</button>
+        <button type="button" id="tab-explore" role="tab" aria-selected="false" aria-controls="space-preview" tabindex="-1" data-space="explore"><svg class="icon" aria-hidden="true"><use href="#compass"/></svg>Explore</button>
+      </div>
+      <div class="browser-preview" id="space-preview" role="tabpanel" aria-labelledby="tab-work" tabindex="0" data-space="work">
+        <div class="preview-sidebar">
+          <div class="preview-window-bar" aria-hidden="true"><div class="window-dots"><i></i><i></i><i></i></div><svg class="icon"><use href="#bow"/></svg></div>
+          <div class="preview-search"><svg class="icon" aria-hidden="true"><use href="#search"/></svg><span>Search anything</span><span class="key-hint" aria-hidden="true">⌘ T</span></div>
+          <div class="preview-favorites" aria-label="Sample favorites"><span><svg class="icon" aria-hidden="true"><use href="#page"/></svg></span><span><svg class="icon" aria-hidden="true"><use href="#grid"/></svg></span><span><svg class="icon" aria-hidden="true"><use href="#compass"/></svg></span></div>
+          <div class="preview-space-name"><svg class="icon" aria-hidden="true"><use href="#grid" id="space-icon"/></svg><span id="space-name">Work</span></div>
+          <ul class="preview-pins" aria-label="Sample pinned tabs">
+            <li><svg class="icon" aria-hidden="true"><use href="#folder"/></svg><span id="sample-folder">Current project</span></li>
+            <li class="nested selected"><svg class="icon" aria-hidden="true"><use href="#page"/></svg><span id="sample-active">Launch notes</span></li>
+            <li class="nested"><svg class="icon" aria-hidden="true"><use href="#grid"/></svg><span id="sample-pin">Project board</span></li>
+          </ul>
+          <div class="preview-today">Today</div>
+          <ul class="preview-pins" aria-label="Sample Today tabs"><li><svg class="icon" aria-hidden="true"><use href="#page"/></svg><span id="sample-today-one">Interface ideas</span></li><li><svg class="icon" aria-hidden="true"><use href="#compass"/></svg><span id="sample-today-two">A fresh perspective</span></li></ul>
+          <div class="sidebar-foot">A place for every part of your day.</div>
+        </div>
+        <div class="preview-page">
+          <div class="preview-address"><svg class="icon" aria-hidden="true"><use href="#page"/></svg><span id="sample-address">Launch notes</span><span class="preview-only">Sample page</span></div>
+          <div class="sample-content">
+            <div class="sample-symbol" aria-hidden="true"><svg><use href="#grid" id="sample-symbol"/></svg></div>
+            <h3 id="sample-title">A little less<br>scattered.</h3>
+            <p id="sample-description">The plan, the project, the references.<br>Right where you left them.</p>
+            <ul class="sample-checklist" id="sample-checklist"><li><svg class="icon" aria-hidden="true"><use href="#check"/></svg><span>Make room for the important things</span></li><li><svg class="icon" aria-hidden="true"><use href="#check"/></svg><span>Keep the next idea close</span></li></ul>
+          </div>
+        </div>
+      </div>
+      <p class="preview-caption">Interactive design preview with illustrative content — not a live browser or a screenshot of a released build.</p>
+      <div class="space-story"><p><strong>Keep what matters.</strong> Favorites and pinned tabs give your regular places a home.</p><p><strong>Change your context.</strong> Spaces bring a different set of tabs, colors and projects into view.</p><p><strong>Leave some room.</strong> Today is for the things you’re exploring right now.</p></div>
+    </section>
+
+    <section class="questions wrap" id="questions" aria-labelledby="questions-title">
+      <div class="questions-intro"><h2 id="questions-title">A few things<br>worth knowing.</h2><p>A browser is a big thing to build.<br>Here’s where Crossbow stands.</p></div>
+      <div class="question-list">
+        <details><summary>Can I download Crossbow yet?<svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></summary><div><p>Not yet. Crossbow is a development prototype, and individual workflows are still being tested. The waitlist is for news about early access, not an immediate download or a guaranteed release date.</p></div></details>
+        <details><summary>Which platforms are coming?<svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></summary><div><p>macOS is the first development target. Windows and Linux are planned, but neither has a verified release. Crossbow’s desktop interface is built in Rust, with Chromium through CEF as its web engine.</p></div></details>
+        <details><summary>Is this related to Arc?<svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></summary><div><p>Crossbow is an independent project, inspired by sidebar-first browsing. It isn’t made by or affiliated with Arc or The Browser Company. Familiar workflows are the goal; full feature parity is not a claim.</p></div></details>
+        <details><summary>Will I be able to bring my tabs?<svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></summary><div><p>Arc and Chrome importers are in development. Their scope and reliability are still being verified. Passwords, cookies and extensions are not included. You should keep your existing browser and backups.</p></div></details>
+        <details><summary>Does joining create a browser account?<svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></summary><div><p>No. The email waitlist is separate from the browser’s account and sync service. Joining doesn’t create a browser session or transfer browsing data. We use Clerk to manage waitlist entries and Cloudflare to host and protect this site.</p></div></details>
+        <details><summary>What should I know before switching?<svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></summary><div><p>Crossbow isn’t ready to replace your everyday browser yet. Chrome extensions are not currently supported. Some streaming services and provider sign-ins may not work with the embedded web engine. Early-access limitations will be made clear before a public download.</p></div></details>
+      </div>
+    </section>
+
+    <section class="closing wrap" aria-label="Early access"><p>Same internet.<br>A fresh start.</p><a class="button primary" href="#waitlist">Get early access<svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></section>
+  </main>
+  <footer class="site-footer wrap"><a class="brand" href="/" aria-label="Crossbow home"><svg class="brand-mark" aria-hidden="true"><use href="#bow"/></svg><span>Crossbow</span></a><p>Made for the way you wander.</p><a href="/privacy">Privacy</a></footer>
+</body>
+</html>

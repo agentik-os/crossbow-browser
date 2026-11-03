@@ -1,0 +1,4 @@
+# Bundled filter lists, copied unmodified. Licence: CC BY-SA 3.0 Unported (see LICENSE.md).
+# Written by `cargo xtask update-lists`.
+easylist.txt version=202611010524 fetched=2026-11-01 bytes=2034597 sha256=35f280ee4c2cdef9394808deb169abde32f96b82f6628def39c35525ffbbe84f source=https://easylist.to/easylist/easylist.txt
+easyprivacy.txt version=202611010524 fetched=2026-11-01 bytes=1512260 sha256=a9f7c152539e448bf067730fa0c91b931e08430841c6ccf455a2d58e23f01d72 source=https://easylist.to/easylist/easyprivacy.txt

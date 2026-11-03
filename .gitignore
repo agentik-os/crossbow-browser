@@ -1,0 +1,28 @@
+# Build outputs and local tooling state.
+**/target/
+**/node_modules/
+**/.wrangler/
+/cloud/**/build/
+/website/worker/build/
+/dist/
+/.hallmark/
+.DS_Store
+
+# Credentials and private browser state must never enter a source checkpoint.
+.env
+.env.*
+!.env.example
+*.dev.vars
+*.dev.vars.*
+*.sqlite
+*.sqlite-*
+*.p12
+*.p8
+*.key
+
+# Local working folders.
+/.claude/skills/
+/docs/evidence/
+
+# The sync server for `cargo xtask bundle`: one CROSSBOW_API_URL=... line.
+.crossbow-build.env

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture: patched built-ins</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; max-width: 720px; }
+    label { display: block; margin-top: 12px; }
+    input, button { font: inherit; padding: 8px; }
+    input { width: 100%; max-width: 360px; box-sizing: border-box; }
+    button { margin: 16px 12px 0 0; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: #fff; border: 1px solid #adb8ca; }
+  </style>
+  <script>
+    // Before any other script on this page, replace every built-in Crossbow's
+    // login listener relies on with a wrapper that counts the calls made while
+    // none of this page's own code is running. Crossbow's listener captured the
+    // originals before this ran, so after a real sign-in and a fill,
+    // "Calls from outside this page" must stay empty, and no Crossbow function
+    // may be reachable from the page. Synthetic values only.
+    (function () {
+      'use strict';
+      const original = {
+        apply: Reflect.apply,
+        construct: Reflect.construct,
+        gopd: Object.getOwnPropertyDescriptor,
+        define: Object.defineProperty,
+        names: Object.getOwnPropertyNames,
+      };
+      const report = { patched: [], unpatchable: [], outside: Object.create(null), events: [] };
+      let busy = 1;
+      const note = (label) => { report.outside[label] = (report.outside[label] || 0) + 1; };
+      // This page's own code, which may call any built-in.
+      const own = (f) => function (...args) {
+        busy++;
+        try { return original.apply(f, this, args); } finally { busy--; }
+      };
+
+      const wrapValue = (holder, key, label) => {
+        const d = original.gopd(holder, key);
+        if (d === undefined || typeof d.value !== 'function' || (!d.configurable && !d.writable)) { report.unpatchable.push(label); return; }
+        const f = d.value;
+        const wrapper = function (...args) {
+          if (busy === 0) note(label);
+          return original.apply(f, this, args);
+        };
+        original.define(holder, key, { value: wrapper, writable: true, configurable: true, enumerable: d.enumerable });
+        report.patched.push(label);
+      };
+      const wrapAccessor = (holder, key, label) => {
+        const d = original.gopd(holder, key);
+        if (d === undefined || !d.configurable || (d.get === undefined && d.set === undefined)) { report.unpatchable.push(label); return; }
+        const next = { configurable: true, enumerable: d.enumerable };
+        if (d.get !== undefined) {
+          const g = d.get;
+          next.get = function () {
+            if (busy === 0) note(label + ' (get)');
+            return original.apply(g, this, []);
+          };
+        }
+        if (d.set !== undefined) {
+          const s = d.set;
+          next.set = function (v) {
+            if (busy === 0) note(label + ' (set)');
+            original.apply(s, this, [v]);
+          };
+        }
+        original.define(holder, key, next);
+        report.patched.push(label);
+      };
+      const wrapConstructor = (name) => {
+        const C = window[name];
+        if (typeof C !== 'function') { report.unpatchable.push(name); return; }
+        const W = function (...args) {
+          if (busy === 0) note('new ' + name);
+          return original.construct(C, args, new.target === undefined ? C : new.target);
+        };
+        W.prototype = C.prototype;
+        window[name] = W;
+        report.patched.push('new ' + name);
+      };
+
+      wrapValue(Reflect, 'apply', 'Reflect.apply');
+      wrapValue(Function.prototype, 'call', 'Function.prototype.call');
+      wrapValue(Function.prototype, 'apply', 'Function.prototype.apply');
+      wrapValue(Function.prototype, 'bind', 'Function.prototype.bind');
+      wrapValue(Function.prototype, Symbol.hasInstance, 'Function.prototype[Symbol.hasInstance]');
+      wrapValue(Object, 'getOwnPropertyDescriptor', 'Object.getOwnPropertyDescriptor');
+      wrapValue(EventTarget.prototype, 'addEventListener', 'EventTarget.prototype.addEventListener');
+      wrapValue(EventTarget.prototype, 'dispatchEvent', 'EventTarget.prototype.dispatchEvent');
+      wrapValue(Element.prototype, 'querySelectorAll', 'Element.prototype.querySelectorAll');
+      wrapValue(Element.prototype, 'getAttribute', 'Element.prototype.getAttribute');
+      wrapValue(String.prototype, 'includes', 'String.prototype.includes');
+      wrapValue(String.prototype, 'toLowerCase', 'String.prototype.toLowerCase');
+      wrapValue(NodeList.prototype, 'item', 'NodeList.prototype.item');
+      wrapValue(HTMLCollection.prototype, 'item', 'HTMLCollection.prototype.item');
+      wrapValue(Performance.prototype, 'now', 'Performance.prototype.now');
+      wrapValue(PerformanceObserver.prototype, 'observe', 'PerformanceObserver.prototype.observe');
+      wrapValue(PerformanceObserverEntryList.prototype, 'getEntries', 'PerformanceObserverEntryList.prototype.getEntries');
+      wrapAccessor(NodeList.prototype, 'length', 'NodeList.prototype.length');
+      wrapAccessor(HTMLCollection.prototype, 'length', 'HTMLCollection.prototype.length');
+      wrapAccessor(Event.prototype, 'target', 'Event.prototype.target');
+      wrapAccessor(Navigator.prototype, 'userActivation', 'Navigator.prototype.userActivation');
+      if (typeof UserActivation === 'function') wrapAccessor(UserActivation.prototype, 'isActive', 'UserActivation.prototype.isActive');
+      wrapAccessor(Document.prototype, 'activeElement', 'Document.prototype.activeElement');
+      wrapAccessor(Document.prototype, 'forms', 'Document.prototype.forms');
+      wrapAccessor(HTMLInputElement.prototype, 'type', 'HTMLInputElement.prototype.type');
+      wrapAccessor(HTMLInputElement.prototype, 'form', 'HTMLInputElement.prototype.form');
+      wrapAccessor(HTMLInputElement.prototype, 'value', 'HTMLInputElement.prototype.value');
+      wrapAccessor(PerformanceEntry.prototype, 'startTime', 'PerformanceEntry.prototype.startTime');
+      wrapAccessor(PerformanceResourceTiming.prototype, 'initiatorType', 'PerformanceResourceTiming.prototype.initiatorType');
+      wrapConstructor('Event');
+      wrapConstructor('PerformanceObserver');
+      // Getters an option dictionary would fall back to.
+      for (const key of ['bubbles', 'cancelable', 'composed']) {
+        original.define(Object.prototype, key, { configurable: true, get() { if (busy === 0) note('Object.prototype.' + key + ' (get)'); return undefined; } });
+        report.patched.push('Object.prototype.' + key);
+      }
+      // Event.isTrusted is an own, non-configurable property of every event: it can't be patched.
+      report.unpatchable.push('Event isTrusted (unforgeable)');
+
+      const reachable = own(() => original.names(window).filter((name) => /crossbow|capture|followed|focused|filler/i.test(name)));
+      const snapshot = own(() => ({
+        patched: report.patched.length,
+        unpatchable: report.unpatchable.slice(),
+        outside: Object.assign({}, report.outside),
+        reachable: reachable(),
+        events: report.events.slice(-20),
+      }));
+      window.loginProbe = { snapshot: snapshot };
+
+      document.addEventListener('DOMContentLoaded', own(() => {
+        const form = document.getElementById('login');
+        const user = document.getElementById('user');
+        const pass = document.getElementById('pass');
+        const out = document.getElementById('report');
+        const render = own(() => {
+          const s = snapshot();
+          const outside = Object.keys(s.outside).map((label) => label + ': ' + s.outside[label]);
+          out.textContent = 'Built-ins patched: ' + s.patched + '\n'
+            + 'Not patchable: ' + s.unpatchable.join(', ') + '\n'
+            + 'Calls from outside this page: ' + (outside.length === 0 ? 'none' : outside.join('; ')) + '\n'
+            + 'Crossbow names on window: ' + (s.reachable.length === 0 ? 'none' : s.reachable.join(', ')) + '\n'
+            + 'Page events: ' + (s.events.length === 0 ? 'none' : s.events.join(', '));
+        });
+        const signIn = own(() => fetch('/api/login', { method: 'POST', body: '' }).then(own(render), own(render)));
+        form.addEventListener('submit', own((event) => {
+          event.preventDefault();
+          report.events.push(event.isTrusted ? 'trusted submit' : 'untrusted submit');
+          signIn();
+          render();
+        }));
+        for (const type of ['input', 'change']) {
+          user.addEventListener(type, own((event) => { report.events.push(type + ' on username' + (event.isTrusted ? '' : ' (from script)')); render(); }));
+          pass.addEventListener(type, own((event) => { report.events.push(type + ' on password' + (event.isTrusted ? '' : ' (from script)')); render(); }));
+        }
+        document.getElementById('untrusted').addEventListener('click', own(() => {
+          user.value = 'forged-user';
+          pass.value = 'forged-pass';
+          form.dispatchEvent(new SubmitEvent('submit', { bubbles: true, cancelable: true }));
+        }));
+        document.getElementById('scripted').addEventListener('click', own(() => {
+          user.value = 'forged-user';
+          pass.value = 'forged-pass';
+          form.requestSubmit();
+        }));
+        document.getElementById('refresh').addEventListener('click', render);
+        render();
+      }));
+      busy = 0;
+    })();
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Sign in on a page that patches built-ins</h1>
+    <p>Synthetic values only. Sign in with the button below, then use the key button to fill. The report must keep "Calls from outside this page: none" and "Crossbow names on window: none".</p>
+    <form id="login">
+      <label for="user">Username</label>
+      <input id="user" type="text" autocomplete="username" spellcheck="false">
+      <label for="pass">Password</label>
+      <input id="pass" type="password" autocomplete="current-password">
+      <button type="submit">Sign In</button>
+    </form>
+    <button id="untrusted" type="button">Forge an Untrusted Submit</button>
+    <button id="scripted" type="button">Submit From Script After This Click</button>
+    <button id="refresh" type="button">Refresh Report</button>
+    <pre id="report" aria-live="polite"></pre>
+  </main>
+</body>
+</html>

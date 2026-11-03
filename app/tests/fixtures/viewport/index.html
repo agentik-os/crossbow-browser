@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Viewport fixture</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { margin: 0 0 16px; }
+    label { display: block; margin-top: 16px; }
+    input, textarea, button { font: inherit; padding: 8px; }
+    input, textarea { width: 100%; max-width: 480px; }
+    textarea { display: block; min-height: 96px; }
+    button { margin: 16px 12px 16px 0; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    #ruler { height: 40px; width: 100%; border: 2px solid #18202b; background: repeating-linear-gradient(90deg, #dce7fa 0 49px, #18202b 49px 50px); }
+    #reference { width: 100px; height: 40px; margin: 12px 0; background: #2f5ba0; }
+    #layout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    #layout p { padding: 16px; border: 1px solid #adb8ca; }
+    #long-page { min-height: 1400px; padding-top: 160px; }
+    @media (max-width: 1023px) { #layout { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 639px) { main { padding: 16px; } #layout { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: no-preference) { #activity { animation: pulse 1s linear infinite alternate; } }
+    @keyframes pulse { from { opacity: .5; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Native viewport fixture</h1>
+    <p>Synthetic data only. Resize the sidebar, not this document. A narrow responsive layout does not itself indicate a mobile user agent.</p>
+    <div id="ruler" aria-label="Available content width, 50 CSS pixel ticks"></div>
+    <div id="reference" aria-label="Exactly 100 CSS pixels wide"></div>
+    <div id="layout"><p>Column one</p><p>Column two</p><p>Column three</p></div>
+    <label for="draft">Type KEEP-RESIZE, then move the caret</label>
+    <input id="draft" autocomplete="off" spellcheck="false">
+    <label for="notes">Independent multiline control</label>
+    <textarea id="notes" autocomplete="off" spellcheck="false"></textarea>
+    <button id="reset" type="button">Reset observations</button>
+    <button id="scroll" type="button">Scroll to marker</button>
+    <p id="activity">Animation active when reduced motion is off.</p>
+    <pre id="metrics" aria-label="Read-only viewport measurements"></pre>
+    <section id="long-page"><p id="marker">Scroll persistence marker</p></section>
+  </main>
+  <script>
+    (() => {
+      const draft = document.getElementById('draft');
+      const notes = document.getElementById('notes');
+      const samples = [];
+      let dropped = 0;
+      let resized = 0;
+      let lastFrame = 0;
+      let maxFrameGapMs = 0;
+      let frameCount = 0;
+      let measureUntil = 0;
+      let measuring = false;
+      const snapshot = () => ({
+        innerWidth, innerHeight,
+        clientWidth: document.documentElement.clientWidth,
+        clientHeight: document.documentElement.clientHeight,
+        devicePixelRatio,
+        visualWidth: visualViewport?.width ?? null,
+        visualHeight: visualViewport?.height ?? null,
+        visualScale: visualViewport?.scale ?? null,
+        screenWidth: screen.width, screenHeight: screen.height,
+        min640: matchMedia('(min-width: 640px)').matches,
+        min1024: matchMedia('(min-width: 1024px)').matches,
+        min1280: matchMedia('(min-width: 1280px)').matches,
+        coarsePointer: matchMedia('(pointer: coarse)').matches,
+        mobileHint: navigator.userAgentData?.mobile ?? null,
+        userAgent: navigator.userAgent,
+        referenceWidth: document.getElementById('reference').getBoundingClientRect().width,
+        columns: getComputedStyle(document.getElementById('layout')).gridTemplateColumns,
+        scrollX, scrollY, timeOrigin: performance.timeOrigin,
+        focusedControl: document.activeElement === draft ? 'draft' : document.activeElement === notes ? 'notes' : 'other',
+        draftMatchesFixture: draft.value === 'KEEP-RESIZE',
+        draftLength: draft.value.length,
+        selectionStart: draft.selectionStart, selectionEnd: draft.selectionEnd,
+        notesLength: notes.value.length,
+        resized, frameCount, maxFrameGapMs, dropped,
+      });
+      const record = reason => {
+        if (samples.length < 300) samples.push({ reason, at: performance.now(), ...snapshot() });
+        else dropped++;
+        document.getElementById('metrics').textContent = JSON.stringify(snapshot(), null, 2);
+      };
+      const frame = now => {
+        if (lastFrame) maxFrameGapMs = Math.max(maxFrameGapMs, now - lastFrame);
+        lastFrame = now;
+        frameCount++;
+        if (now < measureUntil) requestAnimationFrame(frame);
+        else { measuring = false; lastFrame = 0; record('settled'); }
+      };
+      addEventListener('resize', () => {
+        resized++;
+        record('resize');
+        measureUntil = performance.now() + 500;
+        if (!measuring) { measuring = true; requestAnimationFrame(frame); }
+      });
+      draft.addEventListener('input', () => record('input'));
+      draft.addEventListener('select', () => record('selection'));
+      document.getElementById('reset').onclick = () => {
+        samples.length = 0; dropped = 0; resized = 0; frameCount = 0; maxFrameGapMs = 0;
+        lastFrame = 0; record('reset');
+      };
+      document.getElementById('scroll').onclick = () => document.getElementById('marker').scrollIntoView();
+      // Read through the guarded fixture target only. This never exposes typed text.
+      window.viewportProbe = { snapshot, samples };
+      record('loaded');
+    })();
+  </script>
+</body>
+</html>

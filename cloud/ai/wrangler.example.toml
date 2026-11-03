@@ -1,0 +1,52 @@
+# Crossbow AI Worker (TypeScript, Agents SDK + AI SDK on Workers AI).
+# Top level = dev; `--env prod` = production. Never public: no workers.dev URL,
+# no routes. Reached only through the API Worker's AI_WORKER service binding.
+# A template: copy it to wrangler.toml and replace each <your-...> value with
+# your own Worker names, then use the same names for the API Worker's
+# AI_WORKER services. Keep the bindings, vars and migrations as they are; the
+# Worker's code reads them by these names.
+name = "<your-dev-ai-worker-name>"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = false
+
+[observability]
+enabled = true
+
+[ai]
+binding = "AI"
+
+[vars]
+ENVIRONMENT = "dev"
+# Optional AI Gateway id; empty = call Workers AI directly.
+AI_GATEWAY_ID = ""
+
+[[durable_objects.bindings]]
+name = "CrossbowAgent"
+class_name = "CrossbowAgent"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["CrossbowAgent"]
+
+[env.prod]
+name = "<your-ai-worker-name>"
+workers_dev = false
+preview_urls = false
+
+[env.prod.ai]
+binding = "AI"
+
+[env.prod.vars]
+ENVIRONMENT = "prod"
+AI_GATEWAY_ID = ""
+
+[[env.prod.durable_objects.bindings]]
+name = "CrossbowAgent"
+class_name = "CrossbowAgent"
+
+[[env.prod.migrations]]
+tag = "v1"
+new_sqlite_classes = ["CrossbowAgent"]

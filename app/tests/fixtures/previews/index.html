@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>5-Second Previews fixture</title>
+<style>
+  body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 40px; max-width: 640px; }
+  li { margin: 10px 0; }
+  code { font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>5-Second Previews fixture</h1>
+<p>Hold Shift over a link for half a second. Every page here is synthetic and served from this loopback server only.</p>
+<ul>
+  <li><a href="/article">An article</a>: a summary appears, and the server prints <code>cookie=no referer=no</code>.</li>
+  <li><a href="/hops/3">Three redirects, then the article</a>: a summary appears.</li>
+  <li><a href="/hops/4">Four redirects</a>: "The link redirected more than 3 times, so it wasn't previewed."</li>
+  <li><a href="/away">A redirect to the local network</a>: "Previews aren't available for local network addresses."</li>
+  <li><a href="/report.pdf">A PDF</a>: "This link is a PDF, not a web page."</li>
+  <li><a href="/download">An attachment</a>: "This link downloads a file." No download starts.</li>
+  <li><a href="/missing">A missing page</a>: "The site answered with HTTP status 404."</li>
+  <li><a href="/slow">A slow page</a>: after 4 seconds, "The page took more than 4 seconds to load."</li>
+  <li><a href="/empty">A page without text</a>: "The page has no text to summarize."</li>
+  <li><a href="http://192.168.0.1/">A local network address</a>: refused before anything is fetched.</li>
+</ul>
+</body>
+</html>

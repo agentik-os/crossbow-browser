@@ -1,0 +1,8 @@
+! Title: Crossbow fixture: ads and trackers
+! Written for Crossbow's content blocking fixture. Not a real list.
+/fixture-ad/*$third-party
+##.fixture-ad
+127.0.0.1##.fixture-site-ad
+##.fixture-kept
+127.0.0.1#@#.fixture-kept
+127.0.0.1#?#.fixture-ad:has-text(Sponsored)

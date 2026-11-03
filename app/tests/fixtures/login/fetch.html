@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture: fetch</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; max-width: 640px; }
+    label { display: block; margin-top: 12px; }
+    input, button { font: inherit; padding: 8px; }
+    input { width: 100%; max-width: 360px; box-sizing: border-box; }
+    button { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Sign in without leaving the page</h1>
+    <p>Synthetic values only. Submit stays on this page and sends an empty request to <code>/api/login</code>, as single-page apps do. Crossbow should offer to save once that request starts.</p>
+    <form id="login">
+      <label for="user">Email</label>
+      <input id="user" type="email" spellcheck="false">
+      <label for="pass">Password</label>
+      <input id="pass" type="password" autocomplete="current-password">
+      <button type="submit">Sign In</button>
+    </form>
+    <p id="status" role="status"></p>
+  </main>
+  <script>
+    document.getElementById('login').addEventListener('submit', (event) => {
+      event.preventDefault();
+      fetch('/api/login', { method: 'POST', body: '' })
+        .then((response) => { document.getElementById('status').textContent = response.ok ? 'Signed in.' : 'Sign in failed.'; })
+        .catch(() => { document.getElementById('status').textContent = 'Sign in failed.'; });
+    });
+  </script>
+</body>
+</html>

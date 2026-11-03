@@ -1,0 +1,8 @@
+# Build outputs and local state for the Cloudflare backend.
+api/target/
+api/build/
+e2e/target/
+ai/node_modules/
+**/.wrangler/
+**/.dev.vars
+ai/worker-configuration.d.ts

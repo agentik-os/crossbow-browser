@@ -1,0 +1,24 @@
+[package]
+name = "crossbow-e2e"
+description = "End-to-end journey against a deployed Crossbow cloud environment."
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+publish = false
+
+# Native CLI; not a member of the root workspace.
+[workspace]
+
+[[bin]]
+name = "crossbow-e2e"
+path = "src/main.rs"
+
+[dependencies]
+crossbow-proto = { path = "../../crates/crossbow-proto" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1.54", features = ["rt-multi-thread", "macros", "time", "net", "io-util", "sync"] }
+reqwest = { version = "0.13", features = ["json", "stream"] }
+tokio-tungstenite = { version = "0.30", features = ["native-tls"] }
+futures-util = "0.3"
+getrandom = "0.2"

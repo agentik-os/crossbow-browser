@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; max-width: 720px; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Password save and fill fixture</h1>
+    <p>Loopback only, synthetic values only. Fields have no names, so no typed value is ever sent to this server.</p>
+    <ul>
+      <li><a href="/form">A form that navigates after Sign In</a></li>
+      <li><a href="/fetch">A form that signs in with a request and stays on the page</a></li>
+      <li><a href="/frames">A same-origin frame and a cross-origin frame</a></li>
+      <li><a href="/patched">A page that patches the built-ins the listener uses</a></li>
+      <li><a href="{{OTHER}}/form">The same form on localhost, so another origin and another site</a></li>
+    </ul>
+  </main>
+</body>
+</html>

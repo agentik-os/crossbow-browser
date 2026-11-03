@@ -1,0 +1,48 @@
+[package]
+name = "crossbow-core"
+description = "Crossbow domain model (profiles, spaces, folders, pinned items, tabs), local store and sync client."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+crossbow-proto = { path = "../crossbow-proto" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.40", features = ["bundled"] }
+uuid = { version = "1.29", features = ["v7"] }
+url = "2.5"
+nucleo-matcher = "0.3"
+directories = "6"
+thiserror = "2"
+log = "0.4"
+tokio = { version = "1", features = ["rt", "macros", "time", "sync", "net"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+tokio-tungstenite = { version = "0.30", features = ["rustls-tls-webpki-roots"] }
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+keyring = { version = "4", optional = true }
+# Reviewed RustCrypto primitives for end-to-end encrypted library sync.
+chacha20poly1305 = { version = "0.10.1", default-features = false, features = ["alloc"] }
+hkdf = "0.13"
+sha2 = "0.11"
+subtle = "2.6"
+zeroize = "1.9"
+getrandom = "0.3"
+data-encoding = "2.11"
+# Signed updates: Ed25519 feed signatures, the .tar.gz archive and its Info.plist.
+ring = "0.17"
+flate2 = "1"
+tar = { version = "0.4", default-features = false }
+plist = "1"
+
+[target.'cfg(unix)'.dependencies]
+# O_NOFOLLOW when reading QA credential files.
+libc = "0.2"
+
+[features]
+default = ["keychain"]
+keychain = ["dep:keyring"]
+
+[dev-dependencies]
+tempfile = "3"

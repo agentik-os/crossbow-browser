@@ -1,0 +1,21 @@
+[package]
+name = "crossbow-engine"
+description = "Crossbow web engine layer: Chromium (CEF) off-screen browsers rendered into wgpu textures."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+cef = { version = "=154.5.0", default-features = false, features = ["accelerated_osr"] }
+wgpu = "30"
+log = "0.4"
+
+[features]
+default = ["sandbox"]
+sandbox = ["cef/sandbox"]
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6.3"
+objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSApplication", "NSResponder", "NSEvent"] }
+objc2-foundation = "0.3.2"

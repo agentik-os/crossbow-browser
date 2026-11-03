@@ -1,0 +1,19 @@
+[package]
+name = "xtask"
+description = "Crossbow build tasks: app icon and platform bundles."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+tiny-skia = "0.11.4"
+
+[target.'cfg(unix)'.dependencies]
+# release-key and release-sign: the update feed exactly as Crossbow reads it.
+crossbow-core = { path = "../crates/crossbow-core", default-features = false }
+zeroize = "1.9"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+cef = { version = "=154.5.0", default-features = false, features = ["build-util"] }
+semver = "1"

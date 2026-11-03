@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Appearance fixture</title>
+  <style>
+    /* The page's own light and dark versions, chosen by prefers-color-scheme alone. */
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; --text: #18202b; --page: #f4f6fa; --panel: #ffffff; --edge: #adb8ca; }
+    @media (prefers-color-scheme: dark) { :root { --text: #e8ecf3; --page: #11151c; --panel: #1c2230; --edge: #4a5468; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--text); background: var(--page); }
+    main { padding: 24px; max-width: 960px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { margin: 0 0 16px; }
+    #mode { display: inline-block; min-width: 8ch; padding: 4px 12px; border: 1px solid var(--edge); border-radius: 8px; background: var(--panel); font-weight: 600; }
+    label { display: block; margin-top: 16px; }
+    input, select { font: inherit; padding: 8px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; border: 1px solid var(--edge); background: var(--panel); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Website appearance fixture</h1>
+    <p>Synthetic page. It never changes its own appearance; it only reports what the browser asks for.</p>
+    <p>This page sees: <span id="mode" aria-live="polite">unknown</span></p>
+    <label for="sample">A native field, which follows the page's color scheme</label>
+    <input id="sample" value="Sample" autocomplete="off" spellcheck="false">
+    <label for="choice">A native menu</label>
+    <select id="choice"><option>One</option><option>Two</option></select>
+    <pre id="metrics" aria-label="Read-only appearance measurements"></pre>
+  </main>
+  <script>
+    (() => {
+      const dark = matchMedia('(prefers-color-scheme: dark)');
+      const light = matchMedia('(prefers-color-scheme: light)');
+      const changes = [];
+      let dropped = 0;
+      const navigation = performance.getEntriesByType('navigation')[0];
+      const snapshot = () => ({
+        prefersDark: dark.matches,
+        prefersLight: light.matches,
+        background: getComputedStyle(document.body).backgroundColor,
+        // "reload" means the page was reloaded; a live change keeps "navigate".
+        navigationType: navigation ? navigation.type : null,
+        timeOrigin: performance.timeOrigin,
+        changeCount: changes.length + dropped,
+        dropped,
+      });
+      const show = () => {
+        document.getElementById('mode').textContent = dark.matches ? 'dark' : light.matches ? 'light' : 'no preference';
+        document.getElementById('metrics').textContent = JSON.stringify({ ...snapshot(), changes }, null, 2);
+      };
+      dark.addEventListener('change', () => {
+        if (changes.length < 50) changes.push({ at: Math.round(performance.now()), prefersDark: dark.matches });
+        else dropped++;
+        show();
+      });
+      // Read through the guarded fixture target only.
+      window.appearanceProbe = { snapshot, changes };
+      show();
+    })();
+  </script>
+</body>
+</html>

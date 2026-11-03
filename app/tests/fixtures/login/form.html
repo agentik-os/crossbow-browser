@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture: form</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; max-width: 640px; }
+    label { display: block; margin-top: 12px; }
+    input, button { font: inherit; padding: 8px; }
+    input { width: 100%; max-width: 360px; box-sizing: border-box; }
+    button { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Sign in</h1>
+    <p>Synthetic values only, such as <code>fixture-user</code> and <code>fixture-pass-1</code>. The fields have no names, so submitting sends no field value to the server.</p>
+    <form method="post" action="/signed-in">
+      <label for="user">Username</label>
+      <input id="user" type="text" autocomplete="username" spellcheck="false">
+      <label for="pass">Password</label>
+      <input id="pass" type="password" autocomplete="current-password">
+      <button type="submit">Sign In</button>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture: payment frame</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; padding: 8px 12px; color: #18202b; background: #fff; }
+    label { display: block; margin-top: 4px; font-size: 14px; }
+    input { font: inherit; padding: 6px; width: 100%; max-width: 320px; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <!-- One group, as a processor's combined card element has: a fill from the focused number reaches the expiry too, and nothing outside this frame. -->
+  <div class="card-fields">
+    <label for="number">Card number</label>
+    <input id="number" type="tel" inputmode="numeric" autocomplete="cc-number">
+    <label for="exp">Expiry (MM / YY)</label>
+    <input id="exp" autocomplete="cc-exp" placeholder="MM / YY">
+  </div>
+</body>
+</html>

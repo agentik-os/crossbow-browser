@@ -1,0 +1,47 @@
+# Preview-only configuration. No deploy or custom-domain route is authorized.
+name = "crossbow-site-dev"
+main = "build/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+preview_urls = false
+
+[build]
+# Start Wrangler with --cwd website/worker from the repo root. --config alone
+# does not change the custom build's cwd in Wrangler 4.135.0.
+command = "worker-build --release . -- --locked"
+
+[assets]
+directory = "../public"
+binding = "ASSETS"
+# Redirect and security checks must run even for an existing static file.
+run_worker_first = true
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+
+[observability]
+# Do not retain request URLs, submitted addresses, tokens or provider responses.
+enabled = false
+
+[vars]
+ENVIRONMENT = "preview"
+WAITLIST_ENABLED = "false"
+# For local work override with --var SITE_ORIGIN:http://127.0.0.1:8798.
+# A deployed preview needs its exact HTTPS origin here before activation.
+SITE_ORIGIN = "https://crossbow.zone"
+TURNSTILE_SITE_KEY = ""
+# Public removal-request contact, chosen and verified by the maintainers before signup.
+PRIVACY_CONTACT = ""
+
+# A binding is mandatory: missing/erroring binding fails closed, not open.
+# Check this self-selected ID is unused in the account BEFORE any deployment.
+# Production must use a separate namespace ID and a separate Worker name.
+[[ratelimits]]
+name = "WAITLIST_RATE_LIMITER"
+namespace_id = "2026102301"
+[ratelimits.simple]
+limit = 5
+period = 60
+
+# Secrets to provision only after the maintainers' approval, never as [vars]:
+# CLERK_SECRET_KEY (dedicated waitlist app), TURNSTILE_SECRET_KEY.
+# Production routes are deliberately absent. See ../README.md for the gate.

@@ -1,0 +1,82 @@
+# Crossbow API Worker (Rust, workers-rs). Top level = dev; `--env prod` = production.
+# A template: copy it to wrangler.toml and replace every <your-...> value with
+# your own Cloudflare names. Keep the bindings, vars and migrations as they are;
+# the Worker's code reads them by these names.
+name = "<your-dev-worker-name>"
+main = "build/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+preview_urls = false
+
+[build]
+command = "worker-build --release"
+
+[observability]
+enabled = true
+
+[vars]
+ENVIRONMENT = "dev"
+# No RESEND_API_KEY in dev, so dev mails no codes. The optional DEV_CODE_KEY
+# secret is the only way to get a code there (docs/sync-protocol.md).
+# The sender of sign-in mail, such as "Crossbow <sync@example.com>".
+MAIL_FROM = "<your-mail-from>"
+# Browser sign-in (docs/sync-protocol.md): a Clerk instance's issuer URL and
+# its public PKCE client ID. No secret. Leave both out and the Clerk routes
+# answer clerk_unavailable.
+CLERK_ISSUER = "<your-clerk-issuer>"
+CLERK_CLIENT_ID = "<your-clerk-client-id>"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "<your-dev-d1-database-name>"
+database_id = "<your-dev-d1-database-id>"
+migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "SYNC_ROOM"
+class_name = "SyncRoom"
+
+# The AI Worker in cloud/ai, reached only through this binding.
+[[services]]
+binding = "AI_WORKER"
+service = "<your-dev-ai-worker-name>"
+
+[triggers]
+crons = ["17 3 * * *"]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SyncRoom"]
+
+# Secrets (wrangler secret put): AUTH_PEPPER (both), RESEND_API_KEY (prod only),
+# DEV_CODE_KEY (dev only, optional).
+
+[env.prod]
+name = "<your-worker-name>"
+workers_dev = true
+preview_urls = false
+
+[env.prod.vars]
+ENVIRONMENT = "prod"
+MAIL_FROM = "<your-mail-from>"
+
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "<your-d1-database-name>"
+database_id = "<your-d1-database-id>"
+migrations_dir = "migrations"
+
+[[env.prod.durable_objects.bindings]]
+name = "SYNC_ROOM"
+class_name = "SyncRoom"
+
+[[env.prod.services]]
+binding = "AI_WORKER"
+service = "<your-ai-worker-name>"
+
+[env.prod.triggers]
+crons = ["17 3 * * *"]
+
+[[env.prod.migrations]]
+tag = "v1"
+new_sqlite_classes = ["SyncRoom"]

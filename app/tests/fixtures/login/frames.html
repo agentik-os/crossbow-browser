@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture: frames</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; }
+    section { margin-bottom: 24px; }
+    iframe { width: 100%; max-width: 560px; height: 420px; border: 2px solid #adb8ca; background: #fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Logins in frames</h1>
+    <section>
+      <h2>Same origin</h2>
+      <p>This frame is on this page's origin. Its login is offered, and the key button fills it.</p>
+      <iframe id="same" src="/form" title="Same-origin login"></iframe>
+    </section>
+    <section>
+      <h2>Another origin: {{OTHER}}</h2>
+      <p>This frame is on localhost, so another origin and another site. Its login is never offered, and a fill never reaches it, even while it has focus.</p>
+      <iframe id="cross" src="{{OTHER}}/form" title="Cross-origin login"></iframe>
+    </section>
+  </main>
+</body>
+</html>

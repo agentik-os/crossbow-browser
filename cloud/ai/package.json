@@ -1,0 +1,21 @@
+{
+  "name": "crossbow-ai",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "description": "Crossbow AI Worker: Agents SDK + AI SDK on Workers AI, reachable only through the API Worker's service binding.",
+  "scripts": {
+    "typecheck": "wrangler types && tsc --noEmit",
+    "test": "node --test --experimental-strip-types test/*.test.ts",
+    "deploy:dev": "wrangler deploy",
+    "deploy:prod": "wrangler deploy --env prod"
+  },
+  "dependencies": {
+    "agents": "0.30.0",
+    "ai": "7.0.150",
+    "workers-ai-provider": "4.0.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

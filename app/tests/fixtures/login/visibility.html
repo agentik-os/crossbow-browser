@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login fixture: what the engine sees</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; color: #18202b; background: #f4f6fa; }
+    main { padding: 24px; max-width: 720px; }
+    section { margin: 0 0 32px; padding: 16px; background: #fff; border: 1px solid #d5dbe6; }
+    h2 { margin: 0 0 8px; font-size: 18px; }
+    .expected { margin: 8px 0 0; padding: 8px; background: #eef3e8; }
+    label { display: block; margin-top: 12px; }
+    input, button { font: inherit; padding: 8px; }
+    input { width: 100%; max-width: 360px; box-sizing: border-box; }
+    button { margin-top: 12px; }
+    .with-icon { position: relative; max-width: 360px; }
+    .icon { position: absolute; right: 6px; bottom: 6px; width: 24px; height: 24px; padding: 0; margin: 0; border: 0; background: #adb8ca; }
+    .float { position: relative; max-width: 360px; margin-top: 28px; }
+    .float input { padding-top: 14px; }
+    .float label { position: absolute; left: 10px; top: 0; margin: 0; padding-top: 10px; color: #5b6576; pointer-events: none; transition: top 120ms, font-size 120ms; }
+    .float input:focus + label, .float input:not(:placeholder-shown) + label { top: -22px; padding-top: 0; font-size: 12px; line-height: 18px; }
+    dialog { border: 1px solid #adb8ca; padding: 24px; }
+    dialog.fade[open] { animation: fade-in 600ms ease-out; }
+    dialog.faint { opacity: 0.98; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    iframe { display: block; width: 100%; max-width: 480px; height: 150px; border: 2px solid #adb8ca; background: #fff; }
+    .frame-box { position: relative; max-width: 484px; margin-top: 12px; }
+    .banner { position: absolute; left: 0; right: 0; bottom: 0; height: 60px; background: #18202b; color: #fff; padding: 8px; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>What the engine sees</h1>
+    <p>Round 10's native check. Loopback only, synthetic values only; the fields have no names, so nothing typed is sent. Save a login for this origin on <a href="/form">/form</a>, the address <code>1 Test Street</code>, <code>Testville</code>, <code>90000</code>, with the name <code>Fixture Person</code>, organization <code>Fixture Org</code>, phone <code>+1 555 0100</code> and email <code>fixture@example.test</code>, and the published test card <code>4242 4242 4242 4242</code> with any future expiry. Each expected result is what IntersectionObserver v2 is specified to give; record what Crossbow does.</p>
+
+    <section id="v1">
+      <h2>V1. A login with a reveal button over the password field</h2>
+      <form onsubmit="return false">
+        <label for="v1-user">Username</label>
+        <input id="v1-user" type="text" autocomplete="username" spellcheck="false">
+        <label for="v1-pass">Password</label>
+        <div class="with-icon">
+          <input id="v1-pass" type="password" autocomplete="current-password">
+          <button class="icon" type="button" aria-label="Show password" onclick="const p = document.getElementById('v1-pass'); p.type = p.type === 'password' ? 'text' : 'password';"></button>
+        </div>
+      </form>
+      <p class="expected">Click the password field and choose the login from the key button: both fields fill at once, with no toast. Logins don't wait for the engine.</p>
+    </section>
+
+    <section id="v2">
+      <h2>V2. An address form with an icon over one field</h2>
+      <form onsubmit="return false">
+        <label for="v2-street">Street address</label>
+        <input id="v2-street" autocomplete="street-address">
+        <label for="v2-city">City</label>
+        <div class="with-icon">
+          <input id="v2-city" autocomplete="address-level2">
+          <span class="icon" aria-hidden="true"></span>
+        </div>
+        <label for="v2-postal">Postal code</label>
+        <input id="v2-postal" autocomplete="postal-code">
+      </form>
+      <p class="expected">Click the street field, choose Fill Address: the street and postal code fill, the city stays empty, and a toast says "Filled 2 of 3 fields. 1 wasn't clearly visible, so it was left empty." If the city fills too, record that the icon didn't count as covering it.</p>
+    </section>
+
+    <section id="v3">
+      <h2>V3. An address form with floating labels</h2>
+      <form onsubmit="return false">
+        <div class="float"><input id="v3-street" autocomplete="street-address" placeholder=" "><label for="v3-street">Street address</label></div>
+        <div class="float"><input id="v3-city" autocomplete="address-level2" placeholder=" "><label for="v3-city">City</label></div>
+        <div class="float"><input id="v3-postal" autocomplete="postal-code" placeholder=" "><label for="v3-postal">Postal code</label></div>
+      </form>
+      <p class="expected">Click the street field (its label moves up), choose Fill Address: nothing fills, and a toast says "Nothing was filled. 2 fields weren't clearly visible, so they were left empty." The city's and postal code's labels are drawn inside them, and a street alone isn't an address. This is the false negative to measure.</p>
+    </section>
+
+    <section id="v4">
+      <h2>V4. An address dialog that fades in, and one that stays at opacity 0.98</h2>
+      <button type="button" onclick="document.getElementById('v4-dialog').showModal()">Open the Fading Dialog</button>
+      <button type="button" onclick="document.getElementById('v4-faint').showModal()">Open the 0.98 Dialog</button>
+      <dialog id="v4-dialog" class="fade">
+        <form method="dialog">
+          <label for="v4-street">Street address</label><input id="v4-street" autocomplete="street-address">
+          <label for="v4-city">City</label><input id="v4-city" autocomplete="address-level2">
+          <label for="v4-postal">Postal code</label><input id="v4-postal" autocomplete="postal-code">
+          <button>Close</button>
+        </form>
+      </dialog>
+      <dialog id="v4-faint" class="faint">
+        <form method="dialog">
+          <label for="v4f-street">Street address</label><input id="v4f-street" autocomplete="street-address">
+          <label for="v4f-city">City</label><input id="v4f-city" autocomplete="address-level2">
+          <label for="v4f-postal">Postal code</label><input id="v4f-postal" autocomplete="postal-code">
+          <button>Close</button>
+        </form>
+      </dialog>
+      <p class="expected">Fading dialog: once it has faded in, click the street field, choose Fill Address: all three fill, with no toast. 0.98 dialog: click the street field, choose Fill Address: nothing fills, and a toast says "Nothing was filled: the field you clicked isn't clearly visible on the page."</p>
+    </section>
+
+    <section id="v5">
+      <h2>V5. Fields hidden in a closed shadow root, beside a visible street field, in a plain container</h2>
+      <div id="v5-box">
+        <label for="v5-street">Street address</label>
+        <input id="v5-street" autocomplete="street-address">
+        <faint-box wrapper="opacity: 0.01">
+          <input autocomplete="name" value="">
+          <input autocomplete="organization" value="">
+          <input autocomplete="postal-code" value="">
+          <input type="tel" autocomplete="tel" value="">
+          <input type="email" autocomplete="email" value="">
+        </faint-box>
+      </div>
+      <p class="expected">Click the street field, choose Fill Address: nothing fills, and a toast says "Nothing was filled. 5 fields weren't clearly visible, so they were left empty." In DevTools, <code>[...document.querySelectorAll('#v5-box input')].map((i) => i.value)</code> is six empty strings.</p>
+    </section>
+
+    <section id="v6">
+      <h2>V6. The same in a form, with a visible city and a filtered wrapper, and planted values</h2>
+      <form id="v6-form" method="post" action="/signed-in">
+        <label for="v6-street">Street address</label>
+        <input id="v6-street" autocomplete="street-address">
+        <label for="v6-city">City</label>
+        <input id="v6-city" autocomplete="address-level2">
+        <faint-box wrapper="filter: opacity(0)">
+          <input autocomplete="name" value="">
+          <input autocomplete="organization" value="Planted Org">
+          <input autocomplete="postal-code" value="">
+          <input type="tel" autocomplete="tel" value="+1 555 0199">
+          <input type="email" autocomplete="email" value="planted@attacker.example">
+        </faint-box>
+        <button type="submit">Save Address</button>
+      </form>
+      <p class="expected">Click the street field, choose Fill Address: the street and city fill, the five hidden fields keep what they held, and a toast says "Filled 2 of 7 fields. 5 weren't clearly visible, so they were left empty." Then, with "Offer to save passwords from websites" on, press Save Address: any offer shows the street and city only, never Planted Org, +1 555 0199 or planted@attacker.example.</p>
+    </section>
+
+    <section id="v7">
+      <h2>V7. A payment frame from another origin: visible, partly covered, and at opacity 0.99</h2>
+      <div class="frame-box"><iframe src="{{OTHER}}/payment" title="Visible payment frame"></iframe></div>
+      <div class="frame-box"><iframe src="{{OTHER}}/payment" title="Partly covered payment frame"></iframe><div class="banner">A banner over the frame's lower half</div></div>
+      <div class="frame-box"><iframe src="{{OTHER}}/payment" title="Faint payment frame" style="opacity: 0.99"></iframe></div>
+      <p class="expected">Visible frame: click its card number, choose Fill Card: the number and expiry fill, with no toast. Partly covered and 0.99 frames: click the card number, choose Fill Card: nothing fills, and a toast says "Nothing was filled: the field you clicked isn't clearly visible on the page."</p>
+    </section>
+  </main>
+  <script>
+    // A custom element whose closed shadow root draws its light-DOM children
+    // in a wrapper styled by its `wrapper` attribute, which script outside
+    // the root can't read. Defined after parsing, so each is upgraded with
+    // its attributes.
+    customElements.define('faint-box', class extends HTMLElement {
+      constructor() {
+        super();
+        const root = this.attachShadow({ mode: 'closed' });
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = this.getAttribute('wrapper') || 'opacity: 0.01';
+        wrapper.append(document.createElement('slot'));
+        root.append(wrapper);
+      }
+    });
+  </script>
+</body>
+</html>
